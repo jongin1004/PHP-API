@@ -6,6 +6,11 @@
 //cURL세션 초기화 
 $ch = curl_init(); 
 
+$header = [
+
+    "test-header: hi"
+];
+
 // cURL옵션 설정
 // curl_setopt($ch, CURLOPT_URL, "https://jsonplaceholder.typicode.com/posts/1");
 
@@ -16,13 +21,24 @@ $ch = curl_init();
 curl_setopt_array($ch, [
 
     CURLOPT_URL => "https://jsonplaceholder.typicode.com/posts/1",
-    CURLOPT_RETURNTRANSFER => true
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => $header,
+    CURLOPT_HEADER => true
 ]);
 
 // cURL세션 실행 (성공시 true, 실패시 false, 단, CURLOPT_RETURNTRANSFER가 설정되있는 경우 성공시 결과값)
 $response = curl_exec($ch);
 
-echo $response;
+$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+
+$content_length = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH);
+
+echo $status_code . "\n";
+echo $content_type . "\n";
+echo $content_length . "\n";
+echo $response . "\n";
 
 
 
