@@ -15,4 +15,11 @@ class ErrorHandler extends BaseController
             "line"    => $exception->getLine()
         ]);        
     }
+
+    public static function hanlerError(): void
+    {
+        echo json_encode([
+            "message" => "hi"
+        ]);  
+    }
 }

@@ -19,6 +19,7 @@ class ApiController extends BaseController
     public function index()
     {        
         set_exception_handler("App\Controllers\ErrorHandler::handlerExecption");
+        set_error_handler("App\Controllers\ErrorHandler::handlerError");
 
         $uri_string = explode("/", uri_string());
         $resource   = $uri_string[1];
@@ -55,6 +56,10 @@ class ApiController extends BaseController
             } else if ($method === "POST") {
 
                 echo "POST TASKS";
+            } else {
+
+                $this->responseMethodNotAllowed("GET, POST");
+                exit;
             }
 
             
@@ -63,7 +68,7 @@ class ApiController extends BaseController
             switch ($method) {
 
                 case "GET":
-                    echo "SHOW {$id}";
+                    echo json_encode($this->taskModel->get($id));
                     break;
 
                 case "PATCH":
@@ -77,5 +82,12 @@ class ApiController extends BaseController
         } 
         
         exit;
+    }
+
+    private function responseMethodNotAllowed(string $method): void
+    {
+        http_response_code(405);
+
+        header("Allow: $method");
     }
 }

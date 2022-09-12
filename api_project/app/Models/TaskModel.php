@@ -12,7 +12,7 @@ class TaskModel extends Model
         'priority',
         'is_completed'
     ];
-
+ 
 
     // Validation
     // protected $validationRules      = [];
@@ -20,12 +20,29 @@ class TaskModel extends Model
     // protected $skipValidation       = false;
     // protected $cleanValidationRules = true;
 
-    public function getAll()
+    public function getAll(): array
     {
         // $result = $this->db->query("SELECT * FROM task")->getResult();
 
         $query = $this->db->query("SELECT * FROM task");
 
+        $result = $this->changeIntToBool($query);
+
+        return $result;
+    }
+
+    public function get(string $id): array
+    {
+
+        $query = $this->db->query("SELECT * FROM task WHERE id = $id");
+
+        $result = $this->changeIntToBool($query);
+
+        return $result;
+    }
+
+    private function changeIntToBool(object $query): array
+    {
         $result = [];
         
         while ($row = $query->getUnbufferedRow('array')) {
@@ -37,5 +54,4 @@ class TaskModel extends Model
 
         return $result;
     }
-
 }
