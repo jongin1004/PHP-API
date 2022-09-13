@@ -18,8 +18,8 @@ class ApiController extends BaseController
     
     public function index()
     {        
-        set_exception_handler("App\Controllers\ErrorHandler::handlerExecption");
         // set_error_handler("App\Controllers\ErrorHandler::handlerError");
+        set_exception_handler("App\Controllers\ErrorHandler::handlerExecption");
 
         $uri_string = explode("/", uri_string());
         $resource   = $uri_string[1];
@@ -56,6 +56,16 @@ class ApiController extends BaseController
             } else if ($method === "POST") {
 
                 $data = (array) json_decode(file_get_contents("php://input"), true);
+
+                $validation = service('validation');
+                
+                if ( ! $validation->run($data, "task")) {
+
+                    $errors = $validation->getErrors();
+
+                    $this->responseUnprocessableEntity($errors);
+                    exit;
+                }
                 
                 $id = $this->taskModel->create($data);
 
@@ -117,5 +127,11 @@ class ApiController extends BaseController
     {
         http_response_code(201);
         echo json_encode(["message" => "Successfully Created Task with ID: $id"]);
+    }
+
+    private function responseUnprocessableEntity(array $errors): void
+    {
+        http_response_code(455);
+        echo json_encode($errors);
     }
 }

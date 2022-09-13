@@ -16,10 +16,12 @@ class ErrorHandler extends BaseController
         ]);        
     }
 
-    public static function hanlerError(): void
+    public static function handlerError(
+        int $errno,
+        string $errstr,
+        string $errfile,
+        int $errline): void
     {
-        echo json_encode([
-            "message" => "hi"
-        ]);  
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 }
