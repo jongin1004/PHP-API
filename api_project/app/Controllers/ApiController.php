@@ -55,7 +55,10 @@ class ApiController extends BaseController
 
             } else if ($method === "POST") {
 
-                echo "POST TASKS";
+                $data = (array) json_decode(file_get_contents("php://input"), true);
+                var_dump($data);
+                exit;
+
             } else {
 
                 $this->responseMethodNotAllowed("GET, POST");
