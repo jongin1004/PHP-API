@@ -41,6 +41,13 @@ class TaskModel extends Model
         return $result;
     }
 
+    public function create(array $data): string
+    {
+        $this->db->table("task")->insert($data);
+
+        return $this->db->insertID();
+    }
+
     private function changeIntToBool(object $query): array
     {
         $result = [];

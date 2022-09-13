@@ -56,7 +56,11 @@ class ApiController extends BaseController
             } else if ($method === "POST") {
 
                 $data = (array) json_decode(file_get_contents("php://input"), true);
-                var_dump($data);
+                
+                $id = $this->taskModel->create($data);
+
+                $this->responseCreated($id);
+                
                 exit;
 
             } else {
@@ -107,5 +111,11 @@ class ApiController extends BaseController
     {
         http_response_code(404);
         echo json_encode(["message" => "Does Not Found Task with ID: $id"]);
+    }
+
+    private function responseCreated(string $id): void
+    {
+        http_response_code(201);
+        echo json_encode(["message" => "Successfully Created Task with ID: $id"]);
     }
 }
