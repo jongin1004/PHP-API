@@ -19,7 +19,7 @@ class ApiController extends BaseController
     public function index()
     {        
         set_exception_handler("App\Controllers\ErrorHandler::handlerExecption");
-        set_error_handler("App\Controllers\ErrorHandler::handlerError");
+        // set_error_handler("App\Controllers\ErrorHandler::handlerError");
 
         $uri_string = explode("/", uri_string());
         $resource   = $uri_string[1];
@@ -65,11 +65,20 @@ class ApiController extends BaseController
             
         } else {
 
+            $task = $this->taskModel->get($id);
+
+            if ( ! $task) {
+
+                $this->responseNotFound($id);
+                exit;
+            }
+
+
             switch ($method) {
 
                 case "GET":
                     echo json_encode($this->taskModel->get($id));
-                    break;
+                    exit;
 
                 case "PATCH":
                     echo "MODIFY {$id}";
@@ -89,5 +98,11 @@ class ApiController extends BaseController
         http_response_code(405);
 
         header("Allow: $method");
+    }
+
+    private function responseNotFound(string $id): void
+    {
+        http_response_code(404);
+        echo json_encode(["message" => "Does Not Found Task with ID: $id"]);
     }
 }

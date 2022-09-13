@@ -54,4 +54,11 @@ class TaskModel extends Model
 
         return $result;
     }
+
+    public function checkExistsTaskById(string $id): array
+    {
+        $query = $this->db->query("SELECT * FROM task WHERE id = $id");
+
+        return $query->getResult();
+    }
 }
