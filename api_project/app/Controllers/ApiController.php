@@ -57,19 +57,30 @@ class ApiController extends BaseController
 
                 $data = (array) json_decode(file_get_contents("php://input"), true);
 
-                $validation = service('validation');
-                
-                if ( ! $validation->run($data, "task")) {
+                $task = new \App\Entities\Task($data);                
 
-                    $errors = $validation->getErrors();
+                if ( ! $insert = $this->taskModel->insert($task)) {
 
-                    $this->responseUnprocessableEntity($errors);
+                    $this->responseUnprocessableEntity($this->taskModel->errors());
                     exit;
-                }
-                
-                $id = $this->taskModel->create($data);
 
-                $this->responseCreated($id);
+                } 
+
+                $this->responseCreated($insert);
+
+                // $validation = service('validation');
+                
+                // if ( ! $validation->run($data, "task")) {
+
+                //     $errors = $validation->getErrors();
+
+                //     $this->responseUnprocessableEntity($errors);
+                //     exit;
+                // }
+                
+                // $id = $this->taskModel->create($data);
+
+                // $this->responseCreated($id);
                 
                 exit;
 
@@ -82,7 +93,9 @@ class ApiController extends BaseController
             
         } else {
 
-            $task = $this->taskModel->get($id);
+            $task = $this->taskModel->find($id);
+
+            // $task = $this->taskModel->get($id);
 
             if ( ! $task) {
 
@@ -90,15 +103,37 @@ class ApiController extends BaseController
                 exit;
             }
 
+            // $task = $task[0];
 
             switch ($method) {
 
                 case "GET":
-                    echo json_encode($this->taskModel->get($id));
+                    
+                    echo json_encode($task);
                     exit;
 
                 case "PATCH":
-                    echo "MODIFY {$id}";
+                    $data = (array) json_decode(file_get_contents("php://input"), true);
+
+                    $task->fill($data);
+
+                    if ( ! $task->hasChanged()) {
+
+                        http_response_code(422);
+                        echo json_encode(["message" => "not changed data"]);
+                        exit;
+                    }                                        
+
+                    $validation = service('validation');
+                    
+                    if ( ! $validation->run($task, "task")) {
+
+                        $errors = $validation->getErrors();
+
+                        $this->responseUnprocessableEntity($errors);
+                        exit;
+                    }
+
                     break;
                 
                 case "DELETE":
@@ -131,7 +166,7 @@ class ApiController extends BaseController
 
     private function responseUnprocessableEntity(array $errors): void
     {
-        http_response_code(455);
+        http_response_code(422);
         echo json_encode($errors);
     }
 }

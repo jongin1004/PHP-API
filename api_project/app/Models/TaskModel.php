@@ -12,7 +12,23 @@ class TaskModel extends Model
         'priority',
         'is_completed'
     ];
- 
+
+    protected $returnType = \App\Entities\Task::class;
+
+    protected $validationRules = [
+        'name'     => 'required',
+        'priority' => 'integer',
+    ];
+
+
+    protected $validationMessages = [
+        'name' => [
+            'required' => 'You must input a name'
+        ],
+        'priority' => [
+            'integer' => 'You must input a integer data in priority'
+        ]
+    ];
 
     // Validation
     // protected $validationRules      = [];
@@ -34,9 +50,16 @@ class TaskModel extends Model
     public function get(string $id): array
     {
 
-        $query = $this->db->query("SELECT * FROM task WHERE id = $id");
+        // $query = $this->db->query("SELECT * FROM task WHERE id = $id");
 
-        $result = $this->changeIntToBool($query);
+         
+        // $result = $query->get();
+
+        // $result = $this->changeIntToBool($query);
+
+        // var_dump($result->fill(["name" => "sibal"]));
+
+        exit;
 
         return $result;
     }
@@ -47,6 +70,11 @@ class TaskModel extends Model
 
         return $this->db->insertID();
     }
+
+    // public function update(array $data): string
+    // {
+        
+    // }
 
     private function changeIntToBool(object $query): array
     {

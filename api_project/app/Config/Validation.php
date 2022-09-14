@@ -45,7 +45,7 @@ class Validation extends BaseConfig
     public $task = [
         'name' => 'required',
         'priority' => 'integer',
-        'is_completed' => 'required|in_list[0, 1]'
+        // 'is_completed' => 'in_list[0, 1,]'
     ];
 
     public $task_errors = [
@@ -56,9 +56,8 @@ class Validation extends BaseConfig
         'priority' => [
             'integer' => 'You must input a integer data in priority'
         ],
-        'is_completed' => [
-            'required' => 'You must input a is_completed',
-            'in_list' => 'You must input a boolean data in is_completed [ 0 or 1 ]'
-        ]
+        // 'is_completed' => [            
+        //     'in_list' => 'You must input a boolean data in is_completed [ 0 or 1 ]'
+        // ]
     ];
 }
