@@ -17,7 +17,7 @@ class TaskModel extends Model
 
     protected $validationRules = [
         'name'     => 'required',
-        'priority' => 'integer',
+        'priority' => 'permit_empty|integer',
     ];
 
 
@@ -71,10 +71,16 @@ class TaskModel extends Model
         return $this->db->insertID();
     }
 
-    // public function update(array $data): string
-    // {
-        
-    // }
+    public function update2($data)
+    {
+        $builder = $this->db->table("task");
+
+        $builder->set($data);
+        $builder->where("id", 26);
+        $builder->update();
+
+
+    }
 
     private function changeIntToBool(object $query): array
     {

@@ -67,20 +67,6 @@ class ApiController extends BaseController
                 } 
 
                 $this->responseCreated($insert);
-
-                // $validation = service('validation');
-                
-                // if ( ! $validation->run($data, "task")) {
-
-                //     $errors = $validation->getErrors();
-
-                //     $this->responseUnprocessableEntity($errors);
-                //     exit;
-                // }
-                
-                // $id = $this->taskModel->create($data);
-
-                // $this->responseCreated($id);
                 
                 exit;
 
@@ -103,8 +89,6 @@ class ApiController extends BaseController
                 exit;
             }
 
-            // $task = $task[0];
-
             switch ($method) {
 
                 case "GET":
@@ -122,17 +106,19 @@ class ApiController extends BaseController
                         http_response_code(422);
                         echo json_encode(["message" => "not changed data"]);
                         exit;
-                    }                                        
-
-                    $validation = service('validation');
+                    }                               
                     
-                    if ( ! $validation->run($task, "task")) {
+                    if ( ! $this->taskModel->save($task)) {
 
-                        $errors = $validation->getErrors();
+                        $errors = $this->taskModel->errors();
 
                         $this->responseUnprocessableEntity($errors);
                         exit;
+
                     }
+
+                    $this->responseUpdated($id);
+                    exit;
 
                     break;
                 
@@ -169,4 +155,10 @@ class ApiController extends BaseController
         http_response_code(422);
         echo json_encode($errors);
     }
+
+    private function responseUpdated(string $id): void
+    {
+        http_response_code(200);
+        echo json_encode(["message" => "Successfully Updated ID : $id"]);
+    } 
 }
