@@ -117,13 +117,17 @@ class ApiController extends BaseController
 
                     }
 
-                    $this->responseUpdated($id);
+                    echo json_encode(["message" => "Successfully Updated ID : $id"]);
                     exit;
 
                     break;
                 
                 case "DELETE":
-                    echo "DELETE {$id}";
+                    
+                    $this->taskModel->delete($id);
+                    echo json_encode(["message" => "Successfully Delete ID : $id"]);
+                    exit;
+
                     break;
             }
         } 
@@ -155,10 +159,4 @@ class ApiController extends BaseController
         http_response_code(422);
         echo json_encode($errors);
     }
-
-    private function responseUpdated(string $id): void
-    {
-        http_response_code(200);
-        echo json_encode(["message" => "Successfully Updated ID : $id"]);
-    } 
 }
