@@ -45,14 +45,23 @@ $routes->get('/', 'Home::index');
 //     ]
 // );
 
-$routes->resource('api/faqs', 
-    [
-        'only' => ['index', 'show'],
-        'controller' => 'FaqController'
-    ]
-);
+// $routes->resource('api/faqs', 
+//     [
+//         'only' => ['index', 'show'],
+//         'controller' => 'FaqController'
+//     ]
+// );
 
-$routes->get('api/test', 'TestController::get');
+// $routes->resource('api/news', 
+//     [
+//         'only' => ['index', 'show'],
+//         'controller' => 'NewsController'
+//     ]
+// );
+
+$routes->get('api/faqs', 'TestController::getFaqs');
+$routes->get('api/news', 'TestController::getNews');
+$routes->get('api/news/(:num)', 'TestController::getNewsById/$1');
 
 /*
  * --------------------------------------------------------------------

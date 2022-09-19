@@ -20,17 +20,31 @@ class FaqController extends ResourceController
      */
     public function index()
     {        
-        echo "hi";
-    }
+        $sql = 
+        "SELECT 
+            qa.id, qa.que, qa.ans, qa.cat_sub_id, qa.order_no qa_order,
+            main.name main_name, main.order_no main_order,
+            sub.name sub_name, sub.order_no sub_order
+        FROM 
+            nrp_faq qa
+        LEFT OUTER JOIN
+            nrp_faq_cat_sub sub ON sub.id = qa.cat_sub_id
+        LEFT OUTER JOIN
+            nrp_faq_cat main ON main.id = sub.cat_id
+        WHERE
+            sub.id = $cat_id
+        AND
+            qa.status = 't'
+        ORDER BY
+            main.order_no,
+            sub.order_no,
+            qa.order_no";
 
-    /**
-     * Return the properties of a resource object
-     *
-     * @return mixed
-     */
-    public function show($id = null)
-    {
-        
+        $result = $this->db->query($sql)->result_array();
+
+        $this->_echo_json($result);
+
+        return $this->response->setJson($result);
     }
 
     public function getCategories()
@@ -47,8 +61,6 @@ class FaqController extends ResourceController
         if ( ! $result) $this->responseNotFound();
 
         return $this->response->setJson($result);
-
-        exit;
     }
 
     protected function responseNotFound()
