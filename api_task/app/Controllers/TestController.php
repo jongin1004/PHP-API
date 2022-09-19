@@ -11,62 +11,66 @@ class TestController extends BaseController
         
     }
 
-    public function getFaqs()
-    {                
-        $ch = curl_init();
-
-        curl_setopt_array($ch, [
-
-            CURLOPT_URL            => "{$_ENV['api_url']}Api_Faq/getFaqCategory",
-            CURLOPT_RETURNTRANSFER => true,            
-        ]);
-
-        $result  = curl_exec($ch);
-        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    public function getFaqs(): void
+    {          
         
-        if ( $status_code !== 200 || ! $result) return;        
+        $url = "{$_ENV['api_url']}/Api_Faq/getFaqCategory";
 
-        json_decode($result, true);
+        list($faqs, $status_code) = $this->ajaxUsingCurl($url);
+        
+        if ($status_code !== 200 || ! $faqs) {
+                        
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("message");        
+        }; 
+
+        dd($faqs);
 
         exit;
     }
 
-    public function getNews()
+    public function getNews(): void
     {        
-        $ch = curl_init();
+        $url = "{$_ENV['api_url']}/Api_News/getNews";
 
-        curl_setopt_array($ch, [
+        list($news, $status_code) = $this->ajaxUsingCurl($url);
 
-            CURLOPT_URL            => "{$_ENV['api_url']}/Api_News/getNews",
-            CURLOPT_RETURNTRANSFER => true, 
-        ]);
+        if ($status_code !== 200 || ! $news) {
+                        
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("message");        
+        };
 
-        $result = curl_exec($ch);
-        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
-        if ( $status_code !== 200 || ! $result) return;        
-
-        $news = json_decode($result, true);        
-
+        dd($news);      
     }
 
-    public function getNewsById($id = null)
+    public function getNewsById(string $id = null): void
     {        
+        $url = "{$_ENV['api_url']}/Api_News/getNewById/442";        
+        
+        list($news, $status_code) = $this->ajaxUsingCurl($url);       
+
+        if ($status_code !== 200 || ! $news) {
+                        
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("message");        
+        };
+
+        dd($news);
+    }
+
+    protected function ajaxUsingCurl(string $url): array
+    {
         $ch = curl_init();
 
         curl_setopt_array($ch, [
 
-            CURLOPT_URL            => "{$_ENV['api_url']}/Api_News/getNewById/442",
+            CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true
-        ]);
-
-        $result = curl_exec($ch);
-        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        ]);        
         
-        if ($status_code !== 200 || ! $result) return;
+        $response = [
+            json_decode(curl_exec($ch), true),
+            curl_getinfo($ch, CURLINFO_HTTP_CODE)
+        ];
 
-        $news = json_decode($result, true);
-
-        dd($news);
+        return $response;
     }
 }
